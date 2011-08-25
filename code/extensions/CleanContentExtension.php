@@ -7,6 +7,11 @@
  * @license BSD License http://silverstripe.org/bsd-license/
  */
 class CleanContentExtension extends DataObjectDecorator {
+	
+	static $clean_on_save = true;
+	static $default_tidy = true;
+	static $default_purify = false;
+	
 	public function extraStatics() {
 		$extra = array(
 			'db'			=> array(
@@ -15,10 +20,12 @@ class CleanContentExtension extends DataObjectDecorator {
 				'CleanOnSave'		=> 'Boolean',
 			),
 			'defaults'		=> array(
-				'CleanOnSave'		=> true
+				'CleanOnSave'		=> self::$clean_on_save,
+				'TidyHtml'			=> self::$default_tidy,
+				'PurifyHtml'		=> self::$default_purify,
 			)
 		);
-		
+
 		return $extra;
 	}
 	

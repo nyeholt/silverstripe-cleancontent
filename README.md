@@ -20,6 +20,16 @@ Content field.
 Note that for $Clean to work, you must still select the appropriate cleaning
 options on the Content / Clean tab. 
 
+By default, new pages have cleaning on save enabled, with HTML Tidy in effect,
+but not Purify. This can be changed by setting the statics in 
+CleanContentExtension, which default as follows. 
+
+	static $clean_on_save = true;
+	static $default_tidy = true;
+	static $default_purify = false;
+
+
+
 ## Maintainer Contacts
 
 * Marcus Nyeholt <marcus@silverstripe.com.au>
