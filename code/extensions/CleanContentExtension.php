@@ -36,6 +36,7 @@ class CleanContentExtension extends DataObjectDecorator {
 	}
 	
 	public function onBeforeWrite() {
+
 		if ($this->owner->CleanOnSave) {
 			
 			if ($this->owner->PurifyHtml) {
@@ -45,8 +46,10 @@ class CleanContentExtension extends DataObjectDecorator {
 			}
 
 			if ($this->owner->TidyHtml) {
+				
 				if ($this->owner->isChanged('Content')) {
 					$this->owner->Content = singleton('CleanContentService')->tidy($this->owner->Content);
+					
 				}
 			}
 			
