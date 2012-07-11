@@ -6,13 +6,13 @@
  * @author marcus@silverstripe.com.au
  * @license BSD License http://silverstripe.org/bsd-license/
  */
-class CleanContentExtension extends DataObjectDecorator {
+class CleanContentExtension extends DataExtension {
 	
 	static $clean_on_save = true;
 	static $default_tidy = true;
 	static $default_purify = false;
 	
-	public function extraStatics() {
+	public function extraStatics($class = null, $extension = null) {
 		$extra = array(
 			'db'			=> array(
 				'TidyHtml'			=> 'Boolean',
@@ -29,7 +29,7 @@ class CleanContentExtension extends DataObjectDecorator {
 		return $extra;
 	}
 	
-	public function updateCMSFields(FieldSet $fields) {
+	public function updateCMSFields(FieldList $fields) {
 		$fields->addFieldToTab('Root.Content.Cleaning', new CheckboxField('TidyHtml', _t('TidyContent.TIDY_HTML', 'Tidy HTML')));
 		$fields->addFieldToTab('Root.Content.Cleaning', new CheckboxField('PurifyHtml', _t('TidyContent.PURIFY_HTML', 'Purify HTML')));
 		$fields->addFieldToTab('Root.Content.Cleaning', new CheckboxField('CleanOnSave', _t('TidyContent.CLEAN_ON_SAVE', 'Clean on Save')));
