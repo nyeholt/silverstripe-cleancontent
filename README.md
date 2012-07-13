@@ -2,6 +2,8 @@
 
 A module that provides HTML Tidy and Purify capabilities
 
+Note: This is the SS3 version of the module! Please checkout the
+ss24 branch for the SilverStripe 2.4 compatible version
 
 ## Basic Usage
 
