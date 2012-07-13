@@ -11,7 +11,7 @@ class CleanContentService {
 	private $purifier;
 	
 	public function __construct() {
-		include_once dirname(dirname(__FILE__)) . '/thirdparty/htmlpurifier-4.0.0-lite/library/HTMLPurifier.auto.php';
+		include_once dirname(dirname(__FILE__)) . '/thirdparty/htmlpurifier-4.4.0-lite/library/HTMLPurifier.auto.php';
 		$this->purifier = new HTMLPurifier();
 	}
 
