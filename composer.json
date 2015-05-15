@@ -1,0 +1,18 @@
+{
+	"name": "silverstripe-australia/silverstripe-cleancontent",
+	"description": "Provides some user-configurable settings for whether content is 'cleaned'.",
+	"type": "silverstripe-module",
+	"keywords": ["silverstripe", "htmltidy", "purify", "utf8"],
+	"license": "BSD-3-Clause",
+	"authors": [
+	{
+		"name": "Marcus Nyeholt",
+		"email": "marcus@silverstripe.com.au"
+	}
+	],
+	"require":
+	{
+		"neitanod/forceutf8": "dev-master#2c1b21e00ed16b2b083ae4e27901cb5f2856db90",
+		"ezyang/htmlpurifier": "dev-master#c67e4c2f7e06f89ca0eb4ce72b191144e40dc3ef"
+	}
+}

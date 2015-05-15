@@ -1,5 +1,5 @@
 <?php
-
+use \ForceUTF8\Encoding;
 /**
  * Service responsible for cleaning up content using purify and html tidy
  *
@@ -23,8 +23,9 @@ class CleanContentService {
 	public $defaultPurifyOptions = array();
 
 	public function __construct() {
-		include_once dirname(dirname(__FILE__)) . '/thirdparty/htmlpurifier-4.4.0-lite/library/HTMLPurifier.auto.php';
-		$this->purifier = new HTMLPurifier();
+//		include_once dirname(dirname(__FILE__)) . '/thirdparty/htmlpurifier-4.4.0-lite/library/HTMLPurifier.auto.php';
+		$config = HTMLPurifier_Config::createDefault();
+		$this->purifier = new HTMLPurifier($config);
 	}
 
 	public function accessible($content, $stripWord = false) {
@@ -86,7 +87,7 @@ class CleanContentService {
 				'new-blocklevel-tags' => 'article aside audio details figcaption figure footer header hgroup nav section source summary temp track video',
 				'new-empty-tags' => 'command embed keygen source track wbr',
 				'new-inline-tags' => 'audio canvas command datalist embed keygen mark meter output progress time video wbr',
-//				'bare'				=> $stripWord,
+				'bare'				=> $stripWord,
 				'word-2000' => $stripWord
 			));
 
@@ -132,6 +133,12 @@ class CleanContentService {
 		$content = $this->purifier->purify($content, $options);
 		$content = preg_replace_callback('/\%5B(.*?)\%5D/', array($this, 'reformatShortcodes'), $content);
 		return $content;
+	}
+	
+	public function fixUtf8($content) {
+		 $content = Encoding::fixUTF8($content);
+		 $content = str_replace('Â', '', $content);
+		 return $content;
 	}
 
 	/**
