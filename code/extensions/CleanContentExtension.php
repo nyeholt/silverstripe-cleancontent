@@ -54,29 +54,38 @@ class CleanContentExtension extends DataExtension {
 			$this->owner->TidyHtml = $conf->DefaultTidy;
 			$this->owner->PurifyHtml = $conf->DefaultPurify;
 			$this->owner->StripWordTags = $conf->DefaultStripWord;
-			$this->owner->FixUTF8 = $config->DefaultFixUTF8;
+			$this->owner->FixUTF8 = $conf->DefaultFixUTF8;
 			if ($this->owner->TidyHtml || $this->owner->PurifyHtml) {
 				$this->owner->CleanOnSave = true;
 			}
 		}
 
 		if ($this->owner->CleanOnSave) {
+			$content = $this->owner->Content;
+			
 			if ($this->owner->FixUTF8) {
 				// Does some cleanup on unicode characters that fall outside printable range
-				$this->owner->Content = singleton('CleanContentService')->fixUtf8($this->owner->Content);
+				$content = singleton('CleanContentService')->fixUtf8($content);
 			}
 			
 			if ($this->owner->PurifyHtml) {
 				if ($this->owner->isChanged('Content')) {
-					$this->owner->Content = singleton('CleanContentService')->purify($this->owner->Content);
+					$content = singleton('CleanContentService')->purify($content);
 				}
 			}
 
 			if ($this->owner->TidyHtml) {
 				if ($this->owner->isChanged('Content')) {
-					$this->owner->Content = singleton('CleanContentService')->tidy($this->owner->Content, $this->owner->StripWordTags);
+					$content = singleton('CleanContentService')->tidy($content, $this->owner->StripWordTags);
 				}
 			}
+			
+			if ($this->owner->FixUTF8) {
+				// Does some cleanup on unicode characters that fall outside printable range
+				$content = singleton('CleanContentService')->fixUtf8($content);
+			}
+			
+			$this->owner->Content = $content;
 		}
 
 		if ($conf->ForceAccessibilityChecks || ($this->owner->CheckAccessible && ($this->owner->isChanged('Content') || $this->owner->isChanged('CheckAccessible')))) {
