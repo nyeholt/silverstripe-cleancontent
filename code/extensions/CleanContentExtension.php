@@ -73,6 +73,11 @@ class CleanContentExtension extends DataExtension {
 					$content = singleton('CleanContentService')->purify($content);
 				}
 			}
+			
+			if ($this->owner->FixUTF8) {
+				// Does some cleanup on unicode characters that fall outside printable range
+				$content = singleton('CleanContentService')->fixUtf8($content);
+			}
 
 			if ($this->owner->TidyHtml) {
 				if ($this->owner->isChanged('Content')) {
