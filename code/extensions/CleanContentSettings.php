@@ -16,7 +16,7 @@ class CleanContentSettings extends DataExtension
         'DefaultFixUTF8'            => 'Boolean',
     );
 
-    public function updateCMSFields(\FieldList $fields)
+    public function updateSettingsFields(\FieldList $fields)
     {
         $fields->addFieldsToTab('Root.ContentCleaning', array(
             new CheckboxField('ForceAccessibilityChecks', 'Force accessibility checks'),

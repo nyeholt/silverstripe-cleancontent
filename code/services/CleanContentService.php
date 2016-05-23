@@ -85,6 +85,7 @@ class CleanContentService
                 'clean' => true,
                 'output-xhtml' => true,
                 'show-body-only' => true,
+                'quote-nbsp'    => true,
                 'wrap' => 0,
                 'input-encoding' => 'utf8',
                 'output-encoding' => 'utf8',

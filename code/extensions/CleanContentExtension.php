@@ -9,7 +9,7 @@
 class CleanContentExtension extends DataExtension
 {
 
-    public static $db = array(
+    private static $db = array(
         'TidyHtml'            => 'Boolean',
         'FixUTF8'            => 'Boolean',
         'StripWordTags'        => 'Boolean',
@@ -17,19 +17,20 @@ class CleanContentExtension extends DataExtension
         'CleanOnSave'        => 'Boolean',
         'CheckAccessible'    => 'Boolean',
         'AccessibleErrors'    => 'Text',
+        'UseSiteSettings'       => 'Boolean'
     );
 
-
-    public static $defaults = array(
-        'CleanOnSave'        => true,
-        'TidyHtml'            => true,
-        'PurifyHtml'        => false,
+    private static $defaults = array(
+        'UseSiteSettings'   => 1
     );
-
     
-    public function updateCMSFields(FieldList $fields)
+    public function updateSettingsFields(FieldList $fields)
     {
+        if (class_exists('Multisites') && $this->owner instanceof Site) {
+            return;
+        }
         $options = new FieldGroup(
+            new CheckboxField('UseSiteSettings', _t('TidyContent.USE_SITE_SETTINGS', 'Use site settings')),
             new CheckboxField('CleanOnSave', _t('TidyContent.CLEAN_ON_SAVE', 'Clean this content whenever the page is saved')),
             new CheckboxField('TidyHtml', _t('TidyContent.TIDY_HTML', 'Tidy HTML')),
             new CheckboxField('PurifyHtml', _t('TidyContent.PURIFY_HTML', 'Purify HTML')),
@@ -41,17 +42,25 @@ class CleanContentExtension extends DataExtension
         $options->setTitle('Cleaning:');
         $fields->addFieldToTab('Root.Cleaning', $options);
         
-        $conf = SiteConfig::current_site_config();
+        $conf = $this->getConf();
         if (strlen($this->owner->AccessibleErrors) && ($conf->ForceAccessibilityChecks || $this->owner->CheckAccessible)) {
             $fields->addFieldToTab('Root.Main', new ReadonlyField('AccessibleErrorsList', 'Possible accessibility issues', $this->owner->AccessibleErrors), 'Content');
         }
     }
     
-    
+    protected function getConf() {
+        $conf = SiteConfig::current_site_config();
+        if (class_exists('Multisites')) {
+            $conf = Multisites::inst()->getCurrentSite();
+        }
+        return $conf;
+    }
+
     public function onBeforeWrite()
     {
-        $conf = SiteConfig::current_site_config();
-        if (!$this->owner->ID) {
+        $conf = $this->getConf();
+
+        if (!$this->owner->ID || $this->owner->UseSiteSettings) {
             // get defaults
             $this->owner->CheckAccessible = $conf->ForceAccessibilityChecks;
             $this->owner->TidyHtml = $conf->DefaultTidy;
@@ -83,8 +92,9 @@ class CleanContentExtension extends DataExtension
             }
 
             if ($this->owner->TidyHtml) {
-                if ($this->owner->isChanged('Content')) {
+                if ($this->owner->isChanged('Content', 2)) {
                     $content = singleton('CleanContentService')->tidy($content, $this->owner->StripWordTags);
+                    $content = singleton('CleanContentService')->fixUtf8($content);
                 }
             }
             
