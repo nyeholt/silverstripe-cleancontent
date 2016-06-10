@@ -10,7 +10,6 @@ use \ForceUTF8\Encoding;
 class CleanContentService
 {
 
-    public static $accessibility_template = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\"><html><head><title>Dummy</title><meta name=\"DCTERMS.title\" content=\"Home\" /></head><body>\$content</body></html>";
     public static $ignore_errors = array(
         'line 1 column 1 - Access: [3.3.1.1]: use style sheets to control presentation.',
         'Access: [1.1.2.1]: <img> missing \'longdesc\' and d-link.',
@@ -29,51 +28,6 @@ class CleanContentService
         //		include_once dirname(dirname(__FILE__)) . '/thirdparty/htmlpurifier-4.4.0-lite/library/HTMLPurifier.auto.php';
         $config = HTMLPurifier_Config::createDefault();
         $this->purifier = new HTMLPurifier($config);
-    }
-
-    public function accessible($content, $stripWord = false)
-    {
-        if (extension_loaded('tidy')) {
-            $check = str_replace('$content', $content, self::$accessibility_template);
-            $tidy = tidy_parse_string($check, array(
-                'clean' => true,
-                'doctype' => 'omit',
-                'show-body-only' => true,
-                'wrap' => 0,
-                'input-encoding' => 'utf8',
-                'output-encoding' => 'utf8',
-                'new-blocklevel-tags' => 'article aside audio details figcaption figure footer header hgroup nav section source summary temp track video',
-                'new-empty-tags' => 'command embed keygen source track wbr',
-                'new-inline-tags' => 'audio canvas command datalist embed keygen mark meter output progress time video wbr',
-                'accessibility-check' => 2,
-//				'bare'				=> $stripWord,
-                'word-2000' => $stripWord
-            ));
-
-            $tidy->cleanRepair();
-            $tidy->diagnose();
-
-            $info = preg_replace('/Info: (.*?\n)/is', '', $tidy->errorBuffer);
-
-            $lines = explode("\n", $info);
-            $good = array();
-            foreach ($lines as $line) {
-                $ignore = false;
-                foreach (self::$ignore_errors as $toIgnore) {
-                    if (strpos($line, $toIgnore) !== false) {
-                        $ignore = true;
-                        continue;
-                    }
-                }
-                if (!$ignore) {
-                    $good[] = preg_replace('/line \d+ column \d+ (.*?)\d+\.\d+\]:/', '', $line);
-                }
-            }
-
-            $info = implode("\n", $good);
-
-            return trim($info);
-        }
     }
 
     public function tidy($content, $stripWord = false)
