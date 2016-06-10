@@ -52,7 +52,7 @@ class CleanContentExtension extends DataExtension
     {
         $conf = $this->getConf();
 
-        if (!$this->owner->ID || $this->owner->UseSiteSettings) {
+        if ((!$this->owner->ID || $this->owner->UseSiteSettings) && $conf) {
             // get defaults
             $this->owner->TidyHtml = $conf->DefaultTidy;
             $this->owner->PurifyHtml = $conf->DefaultPurify;
